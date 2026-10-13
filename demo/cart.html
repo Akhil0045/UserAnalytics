@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexusTech Store — Shopping Cart</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #131b2e;
+      --card-hover: #1a243d;
+      --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --border: #22304d;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding-bottom: 5rem;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Announcement */
+    .announcement-bar {
+      background: #111827;
+      border-bottom: 1px solid var(--border);
+      padding: 0.45rem 1rem;
+      text-align: center;
+      font-size: 0.8125rem;
+      color: var(--text-sub);
+    }
+
+    header {
+      background: rgba(17, 24, 39, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0.875rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .nav-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .nav-btn:hover {
+      background: var(--card-hover);
+      border-color: var(--accent-blue);
+    }
+
+    /* Cart Wrapper */
+    .cart-wrapper {
+      max-width: 1100px;
+      margin: 2.5rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .page-title {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+    }
+
+    .cart-layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    @media (max-width: 850px) {
+      .cart-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Cart Items Table / List */
+    .cart-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .cart-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .cart-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .cart-item-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .item-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex: 1;
+    }
+
+    .item-icon {
+      font-size: 2.5rem;
+      width: 56px;
+      height: 56px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .item-details h4 {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .item-details span {
+      font-size: 0.8125rem;
+      color: var(--text-sub);
+    }
+
+    .item-qty-control {
+      display: flex;
+      align-items: center;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    .item-qty-btn {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 1rem;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+    }
+
+    .item-qty-num {
+      width: 28px;
+      text-align: center;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .item-price-total {
+      font-weight: 700;
+      font-size: 1.125rem;
+      min-width: 75px;
+      text-align: right;
+    }
+
+    .item-remove-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 0.25rem;
+    }
+
+    .item-remove-btn:hover {
+      color: var(--accent-rose);
+    }
+
+    /* Order Summary Card */
+    .summary-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .summary-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.75rem;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9375rem;
+      color: var(--text-sub);
+    }
+
+    .summary-row.total-row {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+      border-top: 1px solid var(--border);
+      padding-top: 0.75rem;
+    }
+
+    /* Promo code */
+    .promo-input-group {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .promo-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8125rem;
+      outline: none;
+    }
+
+    .promo-btn {
+      background: var(--card-hover);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 0.5rem 0.875rem;
+      border-radius: 6px;
+      font-size: 0.8125rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn-checkout {
+      background: linear-gradient(135deg, var(--accent-emerald), #059669);
+      color: #fff;
+      border: none;
+      padding: 0.875rem 1.25rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      display: block;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn-checkout:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-continue {
+      text-align: center;
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .toast {
+      background: #1e293b;
+      border: 1px solid var(--accent-blue);
+      color: #fff;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      html, body {
+        overflow-x: hidden;
+        max-width: 100vw;
+      }
+
+      body {
+        padding-bottom: 5rem;
+      }
+
+      .announcement-bar {
+        font-size: 0.75rem;
+        padding: 0.45rem 0.75rem;
+      }
+
+      .nav-container {
+        padding: 0.75rem 1rem;
+      }
+
+      .brand {
+        font-size: 1.15rem;
+      }
+
+      .nav-btn {
+        padding: 0.4rem 0.65rem;
+        font-size: 0.8rem;
+      }
+
+      .cart-wrapper {
+        margin: 1.25rem auto;
+        padding: 0 1rem;
+      }
+
+      .page-title {
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+      }
+
+      .cart-card {
+        padding: 1rem;
+      }
+
+      .cart-item-row {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+      }
+
+      .item-info {
+        flex: 1 1 100%;
+      }
+
+      .item-qty-control {
+        order: 2;
+      }
+
+      .item-price-total {
+        order: 3;
+        min-width: auto;
+        margin-left: auto;
+        font-size: 1.05rem;
+      }
+
+      .item-remove-btn {
+        order: 4;
+        padding: 0.35rem;
+        font-size: 1.2rem;
+      }
+
+      .floating-tracker-badge {
+        bottom: 0.75rem;
+        right: 0.75rem;
+        padding: 0.4rem 0.7rem;
+        font-size: 0.75rem;
+        max-width: calc(100vw - 1.5rem);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Announcement -->
+  <div class="announcement-bar">
+    <span>🔒 256-Bit SSL Encrypted Checkout · 30-Day Money-Back Guarantee</span>
+  </div>
+
+  <header>
+    <div class="nav-container">
+      <a href="/demo/index.html" class="brand" id="brand-link">
+        <div class="brand-icon">⚡</div>
+        <span>NexusTech</span>
+      </a>
+
+      <div>
+        <a href="/demo/index.html" class="nav-btn" id="nav-catalog-btn">← Continue Shopping</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="cart-wrapper">
+    <h1 class="page-title">Your Shopping Cart</h1>
+
+    <div class="cart-layout">
+      <!-- Items Container -->
+      <div class="cart-card">
+        <div class="cart-items-list" id="cart-list">
+          <!-- Dynamically populated or fallback items -->
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="summary-card">
+        <h3 class="summary-title">Order Summary</h3>
+
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span id="summary-subtotal">$0</span>
+        </div>
+        <div class="summary-row">
+          <span>Express Shipping</span>
+          <span style="color: var(--accent-emerald);">FREE</span>
+        </div>
+        <div class="summary-row" id="discount-row" style="display: none;">
+          <span>Promo Code (20% Off)</span>
+          <span style="color: var(--accent-emerald);" id="summary-discount">-$0</span>
+        </div>
+        <div class="summary-row total-row">
+          <span>Total</span>
+          <span id="summary-total">$0</span>
+        </div>
+
+        <!-- Promo Code Input -->
+        <div class="promo-input-group">
+          <input type="text" class="promo-input" id="promo-code" placeholder="Enter coupon (TECH20)" />
+          <button class="promo-btn" id="btn-apply-promo">Apply</button>
+        </div>
+
+        <!-- Proceed to Checkout Button -->
+        <a href="/demo/checkout.html" class="btn-checkout" id="btn-proceed-checkout">
+          Proceed to Checkout →
+        </a>
+
+        <a href="/demo/index.html" class="btn-continue" id="link-continue-shopping">
+          ← Or continue browsing catalog
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Client Analytics Tracker -->
+  <script src="/tracker/tracker.js"></script>
+
+  <script>
+    let discountApplied = false;
+
+    // Get Cart Items
+    function getCart() {
+      try {
+        const stored = JSON.parse(localStorage.getItem('cf_demo_cart'));
+        if (stored && stored.length > 0) return stored;
+      } catch (_) {}
+
+      // Default sample items if cart was empty
+      return [
+        { id: 'headphones', name: 'NovaPulse ANC Wireless Headphones', icon: '🎧', price: 299, qty: 1 },
+        { id: 'mouse', name: 'ViperGlide Optical Mouse', icon: '🖱️', price: 89, qty: 1 }
+      ];
+    }
+
+    function saveCart(cart) {
+      localStorage.setItem('cf_demo_cart', JSON.stringify(cart));
+      renderCart();
+    }
+
+    function showToast(msg) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = msg;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 2500);
+    }
+
+    function renderCart() {
+      const cart = getCart();
+      const listEl = document.getElementById('cart-list');
+      listEl.innerHTML = '';
+
+      let subtotal = 0;
+
+      cart.forEach((item, index) => {
+        const itemTotal = item.price * (item.qty || 1);
+        subtotal += itemTotal;
+
+        const row = document.createElement('div');
+        row.className = 'cart-item-row';
+        row.innerHTML = `
+          <div class="item-info">
+            <div class="item-icon">${item.icon || '📦'}</div>
+            <div class="item-details">
+              <h4>${item.name}</h4>
+              <span>Unit Price: $${item.price}</span>
+            </div>
+          </div>
+          <div class="item-qty-control">
+            <button class="item-qty-btn" data-action="minus" data-idx="${index}">−</button>
+            <span class="item-qty-num">${item.qty || 1}</span>
+            <button class="item-qty-btn" data-action="plus" data-idx="${index}">+</button>
+          </div>
+          <div class="item-price-total">$${itemTotal}</div>
+          <button class="item-remove-btn" data-action="remove" data-idx="${index}" title="Remove item">✕</button>
+        `;
+        listEl.appendChild(row);
+      });
+
+      // Update Summary
+      const discountAmount = discountApplied ? Math.round(subtotal * 0.2) : 0;
+      const finalTotal = subtotal - discountAmount;
+
+      document.getElementById('summary-subtotal').textContent = `$${subtotal}`;
+      document.getElementById('summary-total').textContent = `$${finalTotal}`;
+
+      const discountRow = document.getElementById('discount-row');
+      if (discountApplied) {
+        discountRow.style.display = 'flex';
+        document.getElementById('summary-discount').textContent = `-$${discountAmount}`;
+      } else {
+        discountRow.style.display = 'none';
+      }
+    }
+
+    // Delegate quantity and remove clicks
+    document.getElementById('cart-list').addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+
+      const action = btn.dataset.action;
+      const idx = parseInt(btn.dataset.idx, 10);
+      const cart = getCart();
+
+      if (action === 'plus') {
+        cart[idx].qty = (cart[idx].qty || 1) + 1;
+        saveCart(cart);
+      } else if (action === 'minus') {
+        if (cart[idx].qty > 1) {
+          cart[idx].qty -= 1;
+          saveCart(cart);
+        }
+      } else if (action === 'remove') {
+        const removed = cart.splice(idx, 1);
+        saveCart(cart);
+        showToast(`Removed ${removed[0]?.name}`);
+      }
+    });
+
+    // Apply Promo Code
+    document.getElementById('btn-apply-promo').addEventListener('click', () => {
+      const code = document.getElementById('promo-code').value.trim().toUpperCase();
+      if (code === 'TECH20') {
+        discountApplied = true;
+        renderCart();
+        showToast('Promo TECH20 Applied: 20% Discount!');
+      } else {
+        showToast('Invalid coupon code. Try TECH20');
+      }
+    });
+
+    renderCart();
+  </script>
+</body>
+</html>
