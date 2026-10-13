@@ -160,9 +160,83 @@ const getHeatmapClicks = async (pageUrl) => {
   };
 };
 
+/**
+ * Retrieves aggregate statistics for all tracked pages.
+ * Aggregates views_count, clicks_count, total_events, unique_sessions, and last_seen.
+ * Supports pagination.
+ * 
+ * @param {Object} options
+ * @param {number} options.page Page number (1-based)
+ * @param {number} options.limit Items per page
+ * @returns {Promise<{ pages: Array, pagination: Object }>}
+ */
+const getTrackedPages = async ({ page = 1, limit = 50 } = {}) => {
+  const skip = (page - 1) * limit;
+
+  const pipeline = [
+    {
+      $group: {
+        _id: '$page_url',
+        views_count: {
+          $sum: { $cond: [{ $eq: ['$event_type', 'page_view'] }, 1, 0] }
+        },
+        clicks_count: {
+          $sum: { $cond: [{ $eq: ['$event_type', 'click'] }, 1, 0] }
+        },
+        total_events: { $sum: 1 },
+        sessions: { $addToSet: '$session_id' },
+        last_seen: { $max: '$timestamp' },
+        first_seen: { $min: '$timestamp' }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        page_url: '$_id',
+        views_count: 1,
+        clicks_count: 1,
+        total_events: 1,
+        unique_sessions: { $size: '$sessions' },
+        first_seen: 1,
+        last_seen: 1
+      }
+    },
+    {
+      $sort: { total_events: -1 }
+    },
+    {
+      $facet: {
+        totalCount: [{ $count: 'count' }],
+        paginatedResults: [
+          { $skip: skip },
+          { $limit: limit }
+        ]
+      }
+    }
+  ];
+
+  const [result] = await Event.aggregate(pipeline);
+
+  const total = result.totalCount.length > 0 ? result.totalCount[0].count : 0;
+  const pages = result.paginatedResults || [];
+  const totalPages = Math.ceil(total / limit) || 1;
+
+  return {
+    pages,
+    pagination: {
+      page,
+      limit,
+      total,
+      total_pages: totalPages
+    }
+  };
+};
+
 module.exports = {
   ingestEvent,
   getSessions,
   getSessionEvents,
-  getHeatmapClicks
+  getHeatmapClicks,
+  getTrackedPages
 };
+

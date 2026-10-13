@@ -7,7 +7,8 @@
     "dev:frontend": "npm --prefix client/dashboard run dev",
     "build:frontend": "npm --prefix client/dashboard run build",
     "start:backend": "npm --prefix server start",
-    "dev:backend": "npm --prefix server run dev"
+    "dev:backend": "npm --prefix server run dev",
+    "test:integration": "npm --prefix server run test:integration"
   },
   "keywords": [
     "analytics",

@@ -1,11 +1,13 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
 const eventRoutes = require('./routes/eventRoutes');
 const sessionRoutes = require('./routes/sessionRoutes');
 const heatmapRoutes = require('./routes/heatmapRoutes');
+const pageRoutes = require('./routes/pageRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -33,6 +35,10 @@ app.use(cors({
 // Request body size limit (50 KB protection against oversized payloads)
 app.use(express.json({ limit: '50kb' }));
 
+// Serve demo store and tracker statically for seamless local testing
+app.use('/demo', express.static(path.join(__dirname, '../../demo')));
+app.use('/tracker', express.static(path.join(__dirname, '../../tracker')));
+
 // Health Check Endpoint (Preserved from Phase 1 & 2)
 app.get('/api/health', (req, res) => {
   const isDbConnected = mongoose.connection.readyState === 1;
@@ -46,6 +52,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/events', eventRoutes);
 app.use('/api/sessions', sessionRoutes);
 app.use('/api/heatmap', heatmapRoutes);
+app.use('/api/pages', pageRoutes);
 
 // 404 Handler for undefined routes
 app.use((req, res, next) => {

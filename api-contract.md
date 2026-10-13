@@ -1,4 +1,4 @@
-﻿# API Contract
+# API Contract
 
 This document defines the contract between:
 
@@ -229,6 +229,43 @@ Example:
 ```
 
 Only click events should be returned.
+
+---
+
+# 6. Tracked Pages Analytics
+
+## Request
+
+GET /api/pages?page=1&limit=50
+
+---
+
+## Response
+
+Example:
+
+```json
+{
+  "success": true,
+  "pages": [
+    {
+      "page_url": "http://localhost:5000/demo/index.html",
+      "views_count": 24,
+      "clicks_count": 86,
+      "total_events": 110,
+      "unique_sessions": 12,
+      "first_seen": "2026-10-13T10:00:00.000Z",
+      "last_seen": "2026-10-13T11:45:00.000Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 50,
+    "total": 1,
+    "total_pages": 1
+  }
+}
+```
 
 ---
 
