@@ -140,41 +140,41 @@ Every phase should perform relevant tests before moving forward.
 
 # 10. Dashboard - Sessions
 
-- [ ] Dashboard loads
-- [ ] Sessions are displayed
-- [ ] Event counts are displayed
-- [ ] Loading state works
-- [ ] Empty state works
-- [ ] Error state works
-- [ ] Clicking a session selects it
+- [x] Dashboard loads
+- [x] Sessions are displayed
+- [x] Event counts are displayed
+- [x] Loading state works
+- [x] Empty state works
+- [x] Error state works
+- [x] Clicking a session selects it
 
 ---
 
 # 11. Dashboard - User Journey
 
-- [ ] Selected session events load
-- [ ] Events appear chronologically
-- [ ] page_view is distinguishable
-- [ ] click is distinguishable
-- [ ] Page URL is displayed
-- [ ] Timestamp is displayed
-- [ ] Click coordinates are displayed
-- [ ] Loading state works
-- [ ] Empty state works
-- [ ] Error state works
+- [x] Selected session events load
+- [x] Events appear chronologically
+- [x] page_view is distinguishable
+- [x] click is distinguishable
+- [x] Page URL is displayed
+- [x] Timestamp is displayed
+- [x] Click coordinates are displayed
+- [x] Loading state works
+- [x] Empty state works
+- [x] Error state works
 
 ---
 
 # 12. Dashboard - Heatmap
 
-- [ ] Page selector loads available pages
-- [ ] Selecting a page fetches its clicks
-- [ ] Click points render correctly
-- [ ] Different viewport sizes are normalized
-- [ ] Empty pages show an empty state
-- [ ] Loading state works
-- [ ] Error state works
-- [ ] Changing page does not display stale results
+- [x] Page selector loads available pages
+- [x] Selecting a page fetches its clicks
+- [x] Click points render correctly
+- [x] Different viewport sizes are normalized
+- [x] Empty pages show an empty state
+- [x] Loading state works
+- [x] Error state works
+- [x] Changing page does not display stale results
 
 ---
 
@@ -200,11 +200,11 @@ React dashboard
 
 Checklist:
 
-- [ ] Full flow works
-- [ ] Data is persisted correctly
-- [ ] Session count matches events
-- [ ] Journey matches stored events
-- [ ] Heatmap matches stored clicks
+- [x] Full flow works
+- [x] Data is persisted correctly
+- [x] Session count matches events
+- [x] Journey matches stored events
+- [x] Heatmap matches stored clicks
 
 ---
 

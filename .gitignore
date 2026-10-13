@@ -28,3 +28,7 @@ Thumbs.db
 *.suo
 *.ntvs*
 *.njsproj
+
+# Test artifacts and temporary screenshots
+.playwright-mcp/
+/*.png
