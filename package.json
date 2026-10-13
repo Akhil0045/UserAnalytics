@@ -1,0 +1,23 @@
+{
+  "name": "causalfunnel-analytics",
+  "version": "1.0.0",
+  "description": "CausalFunnel User Analytics Application - Full Stack Engineer Assignment",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "npm --prefix client/dashboard run dev",
+    "build:frontend": "npm --prefix client/dashboard run build",
+    "start:backend": "npm --prefix server start",
+    "dev:backend": "npm --prefix server run dev"
+  },
+  "keywords": [
+    "analytics",
+    "event-tracking",
+    "heatmap",
+    "session-replay",
+    "react",
+    "express",
+    "mongodb"
+  ],
+  "author": "",
+  "license": "ISC"
+}

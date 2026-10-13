@@ -1,0 +1,2 @@
+# server/src/middleware
+Middleware for validation and error handling will be modularized in subsequent phases.
