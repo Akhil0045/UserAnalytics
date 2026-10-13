@@ -21,10 +21,10 @@ Every phase should perform relevant tests before moving forward.
 
 # 2. MongoDB
 
-- [ ] Valid MongoDB URI connects successfully
-- [ ] Invalid URI produces a clear error
-- [ ] Database connection failure does not silently pass
-- [ ] Environment variables are loaded correctly
+- [x] Valid MongoDB URI connects successfully
+- [x] Invalid URI produces a clear error
+- [x] Database connection failure does not silently pass
+- [x] Environment variables are loaded correctly
 
 ---
 
@@ -32,109 +32,109 @@ Every phase should perform relevant tests before moving forward.
 
 ## Valid page_view
 
-- [ ] event_id accepted
-- [ ] session_id accepted
-- [ ] page_url accepted
-- [ ] timestamp accepted
+- [x] event_id accepted
+- [x] session_id accepted
+- [x] page_url accepted
+- [x] timestamp accepted
 
 ## Valid click
 
-- [ ] click x accepted
-- [ ] click y accepted
-- [ ] viewport width accepted
-- [ ] viewport height accepted
+- [x] click x accepted
+- [x] click y accepted
+- [x] viewport width accepted
+- [x] viewport height accepted
 
 ## Invalid data
 
-- [ ] Missing event_id rejected
-- [ ] Missing session_id rejected
-- [ ] Missing event_type rejected
-- [ ] Missing page_url rejected
-- [ ] Missing timestamp rejected
-- [ ] Invalid event_type rejected
+- [x] Missing event_id rejected
+- [x] Missing session_id rejected
+- [x] Missing event_type rejected
+- [x] Missing page_url rejected
+- [x] Missing timestamp rejected
+- [x] Invalid event_type rejected
 - [ ] Invalid URL rejected
 - [ ] Invalid coordinate rejected
 - [ ] Negative viewport dimensions rejected
-- [ ] Duplicate event_id prevented
+- [x] Duplicate event_id prevented
 
 ---
 
 # 4. Event API
 
-- [ ] POST /api/events works
-- [ ] Valid page_view returns 201
-- [ ] Valid click returns 201
-- [ ] Invalid payload returns 400
-- [ ] Duplicate event does not create duplicate record
-- [ ] received_at is generated server-side
-- [ ] Unexpected database errors are handled
-- [ ] Response does not expose internal errors
+- [x] POST /api/events works
+- [x] Valid page_view returns 201
+- [x] Valid click returns 201
+- [x] Invalid payload returns 400
+- [x] Duplicate event does not create duplicate record
+- [x] received_at is generated server-side
+- [x] Unexpected database errors are handled
+- [x] Response does not expose internal errors
 
 ---
 
 # 5. Tracker
 
-- [ ] First page generates session_id
-- [ ] session_id is stored in localStorage
-- [ ] Page refresh keeps session_id
-- [ ] Navigation keeps session_id
-- [ ] page_view fires once per page load
-- [ ] click event is generated
-- [ ] click x coordinate is correct
-- [ ] click y coordinate is correct
-- [ ] viewport dimensions are captured
-- [ ] event_id is unique
-- [ ] Tracker does not block webpage interaction
-- [ ] Tracker failure does not break webpage
-- [ ] Network failure does not break webpage
+- [x] First page generates session_id
+- [x] session_id is stored in localStorage
+- [x] Page refresh keeps session_id
+- [x] Navigation keeps session_id
+- [x] page_view fires once per page load
+- [x] click event is generated
+- [x] click x coordinate is correct
+- [x] click y coordinate is correct
+- [x] viewport dimensions are captured
+- [x] event_id is unique
+- [x] Tracker does not block webpage interaction
+- [x] Tracker failure does not break webpage
+- [x] Network failure does not break webpage
 
 ---
 
 # 6. Demo Website
 
-- [ ] Page loads
-- [ ] Tracker loads
-- [ ] page_view reaches backend
-- [ ] Clicking buttons creates click events
-- [ ] Multiple clicks create separate events
-- [ ] Refresh creates another page_view
-- [ ] Same session ID is reused
+- [x] Page loads
+- [x] Tracker loads
+- [x] page_view reaches backend
+- [x] Clicking buttons creates click events
+- [x] Multiple clicks create separate events
+- [x] Refresh creates another page_view
+- [x] Same session ID is reused
 
 ---
 
 # 7. Sessions API
 
-- [ ] Sessions are returned
-- [ ] Event counts are correct
-- [ ] Sessions can be paginated
-- [ ] Maximum limit is enforced
-- [ ] Empty database returns valid empty response
-- [ ] Invalid pagination values are handled
+- [x] Sessions are returned
+- [x] Event counts are correct
+- [x] Sessions can be paginated
+- [x] Maximum limit is enforced
+- [x] Empty database returns valid empty response
+- [x] Invalid pagination values are handled
 
 ---
 
 # 8. Session Events API
 
-- [ ] Valid session returns events
-- [ ] Events are ordered by timestamp ascending
-- [ ] Click data is returned for click events
-- [ ] page_view data is returned correctly
-- [ ] Empty session returns valid response
-- [ ] Pagination works
-- [ ] Invalid session ID is handled
+- [x] Valid session returns events
+- [x] Events are ordered by timestamp ascending
+- [x] Click data is returned for click events
+- [x] page_view data is returned correctly
+- [x] Empty session returns valid response
+- [x] Pagination works
+- [x] Invalid session ID is handled
 
 ---
 
 # 9. Heatmap API
 
-- [ ] Valid page URL returns click data
-- [ ] Only click events are returned
-- [ ] page_view events are excluded
-- [ ] URL query parameter works
-- [ ] URL encoding works
-- [ ] Empty page returns empty result
-- [ ] Coordinates are returned correctly
-- [ ] Viewport dimensions are available
+- [x] Valid page URL returns click data
+- [x] Only click events are returned
+- [x] page_view events are excluded
+- [x] URL query parameter works
+- [x] URL encoding works
+- [x] Empty page returns empty result
+- [x] Coordinates are returned correctly
+- [x] Viewport dimensions are available
 
 ---
 

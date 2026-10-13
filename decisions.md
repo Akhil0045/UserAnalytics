@@ -1,4 +1,4 @@
-﻿# Architecture Decision Log
+# Architecture Decision Log
 
 This file records important implementation decisions for the CausalFunnel analytics application.
 
@@ -333,3 +333,16 @@ After each phase:
 Reason:
 
 This reduces accidental complexity and makes debugging easier.
+
+---
+
+## ADR-021 - Database Startup Order and Lifecycle Management
+
+Decision:
+
+The HTTP server starts listening only after the MongoDB connection is successfully established. If the connection fails or `MONGODB_URI` is missing, startup fails immediately with a descriptive fatal error and non-zero exit code. On process termination (`SIGTERM` / `SIGINT`), the HTTP server stops accepting new connections first, followed by closing the Mongoose connection cleanly.
+
+Reason:
+
+Prevents the API from entering a degraded half-open state where requests arrive but the data layer is unavailable. Ensures graceful shutdowns on cloud hosting platforms such as Railway.
+
