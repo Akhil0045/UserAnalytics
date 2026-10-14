@@ -1,1 +1,1 @@
-web: cd server && npm install && npm start
+web: if [ -d "server" ]; then cd server && npm start; else npm start; fi
