@@ -40,6 +40,10 @@
     } catch (_) {
       // Ignore DOM inspection failures
     }
+    // Dynamic fallback: Use production Railway API if running in production domain
+    if (typeof window !== 'undefined' && window.location && window.location.hostname && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      return 'https://useranalytics-production.up.railway.app/api/events';
+    }
     return 'http://localhost:5000/api/events';
   }
 
