@@ -8,26 +8,31 @@ const eventRoutes = require('./routes/eventRoutes');
 const sessionRoutes = require('./routes/sessionRoutes');
 const heatmapRoutes = require('./routes/heatmapRoutes');
 const pageRoutes = require('./routes/pageRoutes');
+const authRoutes = require('./routes/authRoutes');
+const { requireAuth } = require('./middleware/auth');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
-// CORS configuration supporting CLIENT_ORIGIN and local development origins
-const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+// Flexible CORS configuration supporting CLIENT_ORIGIN (single, comma-separated, or Vercel preview domains)
+const rawClientOrigins = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+const allowedOrigins = rawClientOrigins.split(',').map((o) => o.trim().replace(/\/+$/, ''));
+
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow non-browser requests (no origin) or allowed origin or local dev origins
-    if (
-      !origin ||
-      origin === clientOrigin ||
-      origin === 'null' ||
-      origin.startsWith('http://localhost') ||
-      origin.startsWith('http://127.0.0.1')
-    ) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+    if (!origin || origin === 'null') {
+      return callback(null, true);
     }
+    const cleanOrigin = origin.replace(/\/+$/, '');
+    if (
+      allowedOrigins.includes(cleanOrigin) ||
+      cleanOrigin.startsWith('http://localhost') ||
+      cleanOrigin.startsWith('http://127.0.0.1') ||
+      cleanOrigin.endsWith('.vercel.app')
+    ) {
+      return callback(null, true);
+    }
+    callback(new Error('Not allowed by CORS: ' + origin));
   },
   credentials: true
 }));
@@ -48,11 +53,14 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Mount Analytics and Ingestion API Routes
+// Mount Public Ingestion & Authentication Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
-app.use('/api/sessions', sessionRoutes);
-app.use('/api/heatmap', heatmapRoutes);
-app.use('/api/pages', pageRoutes);
+
+// Mount Protected Analytics APIs (Requires Admin Authentication)
+app.use('/api/sessions', requireAuth, sessionRoutes);
+app.use('/api/heatmap', requireAuth, heatmapRoutes);
+app.use('/api/pages', requireAuth, pageRoutes);
 
 // 404 Handler for undefined routes
 app.use((req, res, next) => {

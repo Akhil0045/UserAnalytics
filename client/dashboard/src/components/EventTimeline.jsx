@@ -90,13 +90,13 @@ function EventTimeline({
                 className={`filter-chip ${filterType === 'page_view' ? 'filter-chip-active' : ''}`}
                 onClick={() => setFilterType('page_view')}
               >
-                👁️ Views ({events.filter((e) => e.event_type === 'page_view').length})
+                Views ({events.filter((e) => e.event_type === 'page_view').length})
               </button>
               <button
                 className={`filter-chip ${filterType === 'click' ? 'filter-chip-active' : ''}`}
                 onClick={() => setFilterType('click')}
               >
-                🖱️ Clicks ({events.filter((e) => e.event_type === 'click').length})
+                Clicks ({events.filter((e) => e.event_type === 'click').length})
               </button>
             </div>
 
@@ -105,9 +105,9 @@ function EventTimeline({
               className="action-icon-btn"
               onClick={() => setSortOrder((prev) => (prev === 'desc' ? 'asc' : 'desc'))}
               title="Toggle timeline order"
-              style={{ fontSize: '0.75rem', padding: '0.25rem 0.6rem', height: 'fit-content' }}
+              style={{ fontSize: '0.75rem', padding: '0.3rem 0.65rem', height: 'fit-content' }}
             >
-              {sortOrder === 'desc' ? '⬇️ Reverse (Newest First)' : '⬆️ Chronological (Oldest First)'}
+              {sortOrder === 'desc' ? '↓ Newest First' : '↑ Oldest First'}
             </button>
           </div>
         )}
@@ -116,7 +116,6 @@ function EventTimeline({
       <div className="panel-body">
         {!hasSelectedSession && (
           <div className="state-message state-empty">
-            <div className="empty-icon">🧭</div>
             <p>No session selected.</p>
             <span className="text-muted text-sm">
               Select a session from the list to explore its event journey.
@@ -160,7 +159,7 @@ function EventTimeline({
                 <div key={event.event_id || index} className="timeline-item">
                   <div className="timeline-marker">
                     <span className={`marker-icon ${isPageView ? 'marker-view' : 'marker-click'}`}>
-                      {isPageView ? '👁️' : '🖱️'}
+                      <span className={`marker-dot ${isPageView ? 'marker-dot-view' : 'marker-dot-click'}`} />
                     </span>
                     {index < displayedEvents.length - 1 && <div className="timeline-connector"></div>}
                   </div>
@@ -173,8 +172,8 @@ function EventTimeline({
                         </span>
                         <span className="step-num text-muted text-xs">
                           Step #{event.stepNumber}
-                          {isLatest && <span style={{ color: '#34d399', marginLeft: '4px', fontWeight: 600 }}>• Latest</span>}
-                          {isInitial && <span style={{ color: '#60a5fa', marginLeft: '4px', fontWeight: 600 }}>• Initial</span>}
+                          {isLatest && <span style={{ color: '#34d399', marginLeft: '6px', fontWeight: 600 }}>• Latest</span>}
+                          {isInitial && <span style={{ color: '#60a5fa', marginLeft: '6px', fontWeight: 600 }}>• Initial</span>}
                         </span>
                       </div>
                       <div className="timeline-time-row">
@@ -195,7 +194,7 @@ function EventTimeline({
                           onClick={() => onViewOnHeatmap(event.page_url)}
                           title="Open this URL in Heatmap view"
                         >
-                          🔥 View Heatmap
+                          View Heatmap →
                         </button>
                       )}
                     </div>
@@ -203,11 +202,11 @@ function EventTimeline({
                     {isClick && event.click && (
                       <div className="timeline-click-data">
                         <span className="coord-chip">
-                          📍 Coordinates: <strong>({event.click.x}, {event.click.y})</strong>
+                          Coords: <strong>({event.click.x}, {event.click.y})</strong>
                         </span>
                         {event.click.viewport_width && (
                           <span className="viewport-chip">
-                            🖥️ Viewport: {event.click.viewport_width} × {event.click.viewport_height}
+                            Viewport: {event.click.viewport_width} × {event.click.viewport_height}
                           </span>
                         )}
                       </div>

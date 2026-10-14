@@ -269,6 +269,75 @@ Example:
 
 ---
 
+# 7. Admin Authentication
+
+Analytics inspection endpoints (`/api/sessions`, `/api/heatmap`, `/api/pages`) are protected and require a Bearer token in the `Authorization` header. Event ingestion (`POST /api/events`) and health check (`GET /api/health`) remain public.
+
+## Login Request
+
+POST /api/auth/login
+
+Content-Type: application/json
+
+```json
+{
+  "username": "admin",
+  "password": "your-password"
+}
+```
+
+## Login Success
+
+HTTP 200
+
+```json
+{
+  "success": true,
+  "token": "<jwt-token>",
+  "user": {
+    "username": "admin",
+    "role": "admin"
+  }
+}
+```
+
+## Verify Token Request
+
+GET /api/auth/me
+
+Headers:
+`Authorization: Bearer <jwt-token>`
+
+## Verify Token Success
+
+HTTP 200
+
+```json
+{
+  "success": true,
+  "authenticated": true,
+  "user": {
+    "username": "admin",
+    "role": "admin",
+    "login_time": "2026-10-14T16:58:52.095Z",
+    "exp": 1792083532095
+  }
+}
+```
+
+## Unauthorized Response
+
+HTTP 401
+
+```json
+{
+  "success": false,
+  "error": "Authentication required. Please log in as an administrator to view analytics."
+}
+```
+
+---
+
 # Event Data Contract
 
 ## Required

@@ -72,14 +72,14 @@ function Heatmap({
                 onClick={() => setViewMode('points')}
                 title="View precise click coordinates with glow rings"
               >
-                🎯 Precision Points
+                Points
               </button>
               <button
                 className={`mode-btn ${viewMode === 'density' ? 'mode-btn-active' : ''}`}
                 onClick={() => setViewMode('density')}
                 title="View thermal density blooms"
               >
-                🔥 Thermal Density
+                Density
               </button>
             </div>
 

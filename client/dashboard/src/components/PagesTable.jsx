@@ -110,12 +110,12 @@ function PagesTable({
                       </td>
                       <td>
                         <span className="badge badge-pageview">
-                          👁️ {p.views_count}
+                          {p.views_count} views
                         </span>
                       </td>
                       <td>
                         <span className="badge badge-click">
-                          🖱️ {p.clicks_count}
+                          {p.clicks_count} clicks
                         </span>
                       </td>
                       <td>
@@ -123,7 +123,7 @@ function PagesTable({
                       </td>
                       <td>
                         <span className="badge badge-neutral">
-                          👤 {p.unique_sessions}
+                          {p.unique_sessions} sessions
                         </span>
                       </td>
                       <td>
@@ -132,7 +132,7 @@ function PagesTable({
                           onClick={() => onSelectPageForHeatmap(p.page_url)}
                           title="Open Heatmap for this URL"
                         >
-                          🔥 View Heatmap
+                          Heatmap →
                         </button>
                       </td>
                     </tr>

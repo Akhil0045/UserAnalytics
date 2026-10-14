@@ -1,29 +1,34 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { getSessions, getSessionEvents, getHeatmap, getPages } from '../services/api';
+import {
+  getSessions,
+  getSessionEvents,
+  getHeatmap,
+  getPages,
+  verifyAdmin,
+  clearAuthToken,
+  getAuthToken
+} from '../services/api';
 import SessionList from '../components/SessionList';
 import SessionDetails from '../components/SessionDetails';
 import EventTimeline from '../components/EventTimeline';
 import PageSelector from '../components/PageSelector';
 import Heatmap from '../components/Heatmap';
 import PagesTable from '../components/PagesTable';
+import Login from '../components/Login';
 
 /**
  * Main Dashboard Page
  * Orchestrates session list, user journey timeline, multi-page flows, and click heatmaps.
- * Features:
- * - High-level KPI metric cards (Total Sessions, Total Events, Avg Events/Session, Unique Pages)
- * - Multi-page flow analytics table with conversion metrics and 1-click heatmap jump
- * - Auto-refresh polling toggle (5-second intervals with live pulse indicator)
- * - 1-click launcher for the Demo Store in a new tab
- * - Seamless jump between user journey events and the Click Heatmap view
- * - Strict race condition prevention with AbortController
+ * Protected by Administrator Authentication.
  */
 function Dashboard() {
+  // Authentication State
+  const [isAuthenticated, setIsAuthenticated] = useState(Boolean(getAuthToken()));
+  const [adminUser, setAdminUser] = useState(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
   // Navigation / View Tabs: 'journey' | 'pages' | 'heatmap'
   const [activeTab, setActiveTab] = useState('journey');
-
-  // Auto-refresh state
-  const [autoRefresh, setAutoRefresh] = useState(false);
 
   // Sessions State
   const [sessions, setSessions] = useState([]);
@@ -56,8 +61,39 @@ function Dashboard() {
   activeSessionIdRef.current = selectedSessionId;
   activePageRef.current = selectedPage;
 
+  // Verify Admin Session on mount & listen for 401 events
+  useEffect(() => {
+    let isMounted = true;
+
+    verifyAdmin().then((res) => {
+      if (isMounted) {
+        setIsAuthenticated(res.authenticated);
+        if (res.authenticated) {
+          setAdminUser(res.user);
+        }
+        setCheckingAuth(false);
+      }
+    });
+
+    const handleUnauthorized = () => {
+      if (isMounted) {
+        setIsAuthenticated(false);
+        setAdminUser(null);
+      }
+    };
+
+    window.addEventListener('cf_auth_unauthorized', handleUnauthorized);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('cf_auth_unauthorized', handleUnauthorized);
+    };
+  }, []);
+
   // 1. Fetch Sessions List
   const loadSessions = useCallback(async (isBackground = false) => {
+    if (!isAuthenticated) return;
+
     if (!isBackground) {
       setSessionsLoading(true);
     }
@@ -80,10 +116,12 @@ function Dashboard() {
         setSessionsLoading(false);
       }
     }
-  }, [selectedSessionId]);
+  }, [isAuthenticated, selectedSessionId]);
 
   // 2. Fetch Tracked Pages Aggregates
   const loadPages = useCallback(async (isBackground = false) => {
+    if (!isAuthenticated) return;
+
     if (!isBackground) {
       setPagesLoading(true);
     }
@@ -107,7 +145,7 @@ function Dashboard() {
         setPagesLoading(false);
       }
     }
-  }, [selectedPage]);
+  }, [isAuthenticated, selectedPage]);
 
   // Combined Refresh Handler
   const refreshAllData = useCallback((isBackground = false) => {
@@ -115,24 +153,16 @@ function Dashboard() {
     loadPages(isBackground);
   }, [loadSessions, loadPages]);
 
+  // Load initial data when authenticated
   useEffect(() => {
-    refreshAllData(false);
-  }, [refreshAllData]);
-
-  // Auto-Refresh Polling Effect (every 5 seconds when enabled)
-  useEffect(() => {
-    if (!autoRefresh) return;
-
-    const intervalId = setInterval(() => {
-      refreshAllData(true);
-    }, 5000);
-
-    return () => clearInterval(intervalId);
-  }, [autoRefresh, refreshAllData]);
+    if (isAuthenticated) {
+      refreshAllData(false);
+    }
+  }, [isAuthenticated, refreshAllData]);
 
   // 3. Fetch Events when Selected Session Changes (with Race Condition Guard)
   useEffect(() => {
-    if (!selectedSessionId) {
+    if (!isAuthenticated || !selectedSessionId) {
       setEvents([]);
       return;
     }
@@ -170,11 +200,11 @@ function Dashboard() {
     return () => {
       controller.abort();
     };
-  }, [selectedSessionId]);
+  }, [isAuthenticated, selectedSessionId]);
 
   // 4. Fetch Heatmap when Selected Page Changes (with Race Condition Guard)
   useEffect(() => {
-    if (!selectedPage) {
+    if (!isAuthenticated || !selectedPage) {
       setHeatmapClicks([]);
       return;
     }
@@ -211,7 +241,14 @@ function Dashboard() {
     return () => {
       controller.abort();
     };
-  }, [selectedPage]);
+  }, [isAuthenticated, selectedPage]);
+
+  // Handle Logout
+  const handleLogout = () => {
+    clearAuthToken();
+    setIsAuthenticated(false);
+    setAdminUser(null);
+  };
 
   // Active session metadata object
   const activeSession = sessions.find((s) => s.session_id === selectedSessionId);
@@ -249,53 +286,74 @@ function Dashboard() {
     window.open('http://localhost:5000/demo/', '_blank');
   };
 
+  // Auth checking loading state
+  if (checkingAuth) {
+    return (
+      <div className="auth-loading-screen">
+        <div className="spinner"></div>
+        <p>Verifying administrator session...</p>
+      </div>
+    );
+  }
+
+  // If unauthenticated, show Administrator Login Screen
+  if (!isAuthenticated) {
+    return (
+      <Login
+        onLoginSuccess={(user) => {
+          setIsAuthenticated(true);
+          setAdminUser(user);
+        }}
+      />
+    );
+  }
+
   return (
     <div className="dashboard-container">
-      {/* Top Navigation Bar */}
+      {/* Top Navigation Bar - Simple & Clean */}
       <header className="dashboard-header">
         <div className="header-brand">
-          <div className="brand-logo-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M18 20V10M12 20V4M6 20v-6" strokeLinecap="round" />
+          <div className="brand-logo-mark">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 3v18h18" />
+              <path d="M18 9l-5 5-4-4-3 3" />
             </svg>
           </div>
-          <div>
-            <h1 className="header-title">CausalFunnel Analytics</h1>
-            <span className="text-muted text-xs">Real-Time Interaction & Multi-Page Intelligence</span>
+          <div className="brand-titles">
+            <span className="brand-name">CausalFunnel</span>
+            <span className="brand-divider">/</span>
+            <span className="brand-app-name">Analytics</span>
           </div>
         </div>
 
-        <div className="header-nav-tabs">
+        <nav className="header-nav-tabs">
           <button
             className={`tab-btn ${activeTab === 'journey' ? 'tab-btn-active' : ''}`}
             onClick={() => setActiveTab('journey')}
           >
-            👥 Sessions & Journey
+            Sessions & Journey
           </button>
           <button
             className={`tab-btn ${activeTab === 'pages' ? 'tab-btn-active' : ''}`}
             onClick={() => setActiveTab('pages')}
           >
-            🌐 Multi-Page Flow ({pagesList.length})
+            Multi-Page Flow
+            <span className="tab-count-pill">{pagesList.length}</span>
           </button>
           <button
             className={`tab-btn ${activeTab === 'heatmap' ? 'tab-btn-active' : ''}`}
             onClick={() => setActiveTab('heatmap')}
           >
-            🔥 Click Heatmap
+            Click Heatmap
           </button>
-        </div>
+        </nav>
 
         <div className="header-actions">
-          {/* Live Auto-Refresh Polling Switch */}
-          <button
-            className={`btn-auto-refresh ${autoRefresh ? 'auto-refresh-on' : ''}`}
-            onClick={() => setAutoRefresh((prev) => !prev)}
-            title="Toggle automatic 5-second live data refresh"
-          >
-            <span className={`pulse-dot ${autoRefresh ? 'pulse-dot-active' : ''}`}></span>
-            {autoRefresh ? 'Live (5s)' : 'Auto-Refresh'}
-          </button>
+          {/* Admin Profile Pill */}
+          <div className="admin-status-pill" title="Logged in as Administrator">
+            <span className="live-status-dot" />
+            <span className="admin-name">{adminUser?.username || 'admin'}</span>
+          </div>
 
           {/* Manual Refresh Button */}
           <button
@@ -303,7 +361,10 @@ function Dashboard() {
             onClick={() => refreshAllData(false)}
             title="Refresh analytics data"
           >
-            🔄 Refresh
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '5px' }}>
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+            </svg>
+            Refresh
           </button>
 
           {/* Launch Demo Store Button */}
@@ -312,45 +373,59 @@ function Dashboard() {
             onClick={handleLaunchDemo}
             title="Open interactive Demo Store in new tab to test shopping flow"
           >
-            🚀 Open Demo Store
+            Demo Store
+            <span style={{ marginLeft: '4px', opacity: 0.85 }}>↗</span>
+          </button>
+
+          {/* Logout Button */}
+          <button
+            className="btn btn-ghost btn-sm btn-logout"
+            onClick={handleLogout}
+            title="Log out of administrator session"
+          >
+            Logout
           </button>
         </div>
       </header>
 
       {/* Main Content Area */}
       <main className="dashboard-content">
-        {/* KPI Metrics Summary Bar */}
+        {/* KPI Metrics Summary Bar - Clean & Minimalist */}
         <div className="kpi-grid">
           <div className="kpi-card">
-            <div className="kpi-icon-wrap icon-blue">👥</div>
-            <div className="kpi-info">
+            <div className="kpi-card-header">
               <span className="kpi-label">Total Sessions</span>
-              <strong className="kpi-value">{kpiMetrics.totalSessions}</strong>
+              <span className="kpi-tag kpi-tag-blue">Sessions</span>
             </div>
+            <strong className="kpi-value">{kpiMetrics.totalSessions}</strong>
+            <span className="kpi-subtext">Active & historical journeys</span>
           </div>
 
           <div className="kpi-card">
-            <div className="kpi-icon-wrap icon-green">⚡</div>
-            <div className="kpi-info">
-              <span className="kpi-label">Total Events Ingested</span>
-              <strong className="kpi-value">{kpiMetrics.totalEvents}</strong>
+            <div className="kpi-card-header">
+              <span className="kpi-label">Total Events</span>
+              <span className="kpi-tag kpi-tag-green">Ingested</span>
             </div>
+            <strong className="kpi-value">{kpiMetrics.totalEvents}</strong>
+            <span className="kpi-subtext">Page views and clicks recorded</span>
           </div>
 
           <div className="kpi-card">
-            <div className="kpi-icon-wrap icon-purple">📊</div>
-            <div className="kpi-info">
+            <div className="kpi-card-header">
               <span className="kpi-label">Avg Events / Session</span>
-              <strong className="kpi-value">{kpiMetrics.avgPerSession}</strong>
+              <span className="kpi-tag kpi-tag-purple">Depth</span>
             </div>
+            <strong className="kpi-value">{kpiMetrics.avgPerSession}</strong>
+            <span className="kpi-subtext">Mean interactions per visitor</span>
           </div>
 
           <div className="kpi-card">
-            <div className="kpi-icon-wrap icon-amber">🌐</div>
-            <div className="kpi-info">
+            <div className="kpi-card-header">
               <span className="kpi-label">Discovered Pages</span>
-              <strong className="kpi-value">{kpiMetrics.totalPages}</strong>
+              <span className="kpi-tag kpi-tag-amber">Paths</span>
             </div>
+            <strong className="kpi-value">{kpiMetrics.totalPages}</strong>
+            <span className="kpi-subtext">Unique URLs tracked across store</span>
           </div>
         </div>
 

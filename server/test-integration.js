@@ -50,6 +50,49 @@ async function runIntegrationTests() {
     assert(false, 'GET /api/health threw error', err.message);
   }
 
+  // 1b. Auth Guard: Unauthenticated requests to protected endpoints return 401
+  try {
+    const res = await fetch(`${API_BASE}/api/sessions`);
+    assert(
+      res.status === 401,
+      'GET /api/sessions without Authorization header is rejected with HTTP 401'
+    );
+  } catch (err) {
+    assert(false, 'Unauthenticated /api/sessions guard threw error', err.message);
+  }
+
+  // 1c. Admin Login & Token Acquisition
+  let authToken = null;
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: 'admin', password: 'admin123' })
+    });
+    const data = await res.json();
+    authToken = data.token;
+    assert(
+      res.status === 200 && data.success === true && Boolean(data.token) && data.user?.username === 'admin',
+      'POST /api/auth/login succeeds with admin credentials and issues Bearer token'
+    );
+  } catch (err) {
+    assert(false, 'POST /api/auth/login threw error', err.message);
+  }
+
+  const authHeaders = { Authorization: `Bearer ${authToken}` };
+
+  // 1d. Token Verification: GET /api/auth/me
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/me`, { headers: authHeaders });
+    const data = await res.json();
+    assert(
+      res.status === 200 && data.authenticated === true && data.user?.username === 'admin',
+      'GET /api/auth/me validates Bearer token'
+    );
+  } catch (err) {
+    assert(false, 'GET /api/auth/me threw error', err.message);
+  }
+
   // 2. Ingest Page View
   try {
     const res = await fetch(`${API_BASE}/api/events`, {
@@ -130,7 +173,7 @@ async function runIntegrationTests() {
 
   // 5. Query GET /api/sessions
   try {
-    const res = await fetch(`${API_BASE}/api/sessions`);
+    const res = await fetch(`${API_BASE}/api/sessions`, { headers: authHeaders });
     const data = await res.json();
     const session = data.sessions?.find((s) => s.session_id === testSessionId);
     assert(
@@ -144,7 +187,7 @@ async function runIntegrationTests() {
 
   // 6. Query GET /api/sessions/:sessionId/events
   try {
-    const res = await fetch(`${API_BASE}/api/sessions/${encodeURIComponent(testSessionId)}/events`);
+    const res = await fetch(`${API_BASE}/api/sessions/${encodeURIComponent(testSessionId)}/events`, { headers: authHeaders });
     const data = await res.json();
     const hasPv = data.events?.some((e) => e.event_id === pvEventId && e.event_type === 'page_view');
     const hasClick = data.events?.some((e) => e.event_id === clickEventId && e.event_type === 'click' && e.click?.x === 210);
@@ -159,7 +202,7 @@ async function runIntegrationTests() {
 
   // 7. Query GET /api/heatmap?page_url=...
   try {
-    const res = await fetch(`${API_BASE}/api/heatmap?page_url=${encodeURIComponent(testPageUrl)}`);
+    const res = await fetch(`${API_BASE}/api/heatmap?page_url=${encodeURIComponent(testPageUrl)}`, { headers: authHeaders });
     const data = await res.json();
     const clickFound = data.clicks?.some((c) => c.x === 210 && c.y === 350 && c.viewport_width === 1280);
     assert(
@@ -173,7 +216,7 @@ async function runIntegrationTests() {
 
   // 8. Query GET /api/pages
   try {
-    const res = await fetch(`${API_BASE}/api/pages`);
+    const res = await fetch(`${API_BASE}/api/pages`, { headers: authHeaders });
     const data = await res.json();
     const pageFound = data.pages?.find((p) => p.page_url === testPageUrl);
     assert(

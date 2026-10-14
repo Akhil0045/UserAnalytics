@@ -73,7 +73,7 @@ function SessionDetails({ session }) {
         <div className="meta-item">
           <span className="text-muted text-xs">Session Lifespan</span>
           <span className="meta-value duration-highlight">
-            ⏱️ {calculateDuration(session.first_seen, session.last_seen)}
+            {calculateDuration(session.first_seen, session.last_seen)}
           </span>
         </div>
       </div>

@@ -161,13 +161,27 @@ npm run build
 
 ---
 
-## Implemented Endpoints (Phase 1)
+## Implemented Endpoints
 
-| Method | Endpoint | Description | Status |
+| Method | Endpoint | Description | Auth Required |
 |---|---|---|---|
-| `GET` | `/api/health` | Service health check | Implemented |
+| `GET` | `/api/health` | Service & DB health check | No |
+| `POST` | `/api/events` | Client interaction event ingestion | No |
+| `POST` | `/api/auth/login` | Admin login & token issuance | No |
+| `GET` | `/api/auth/me` | Current admin session verification | Yes (Bearer) |
+| `GET` | `/api/sessions` | Paginated sessions list | Yes (Bearer) |
+| `GET` | `/api/sessions/:sessionId/events` | Chronological session events | Yes (Bearer) |
+| `GET` | `/api/heatmap` | Aggregated click coordinates | Yes (Bearer) |
+| `GET` | `/api/pages` | Multi-page aggregated analytics | Yes (Bearer) |
 
-*All analytics endpoints (`POST /api/events`, `GET /api/sessions`, `GET /api/sessions/:sessionId/events`, `GET /api/heatmap`) are planned for subsequent phases according to the implementation roadmap.*
+---
+
+## Admin Authentication Credentials
+
+To access the analytics dashboard, use the configured admin credentials:
+- **Username**: `admin`
+- **Password**: `admin123`
+*(A 1-click **"Fill Demo Credentials"** button is also built directly into the login screen for rapid evaluation.)*
 
 ---
 

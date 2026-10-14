@@ -4,6 +4,7 @@
   "description": "CausalFunnel User Analytics Application - Full Stack Engineer Assignment",
   "private": true,
   "scripts": {
+    "start": "npm --prefix server start",
     "dev:frontend": "npm --prefix client/dashboard run dev",
     "build:frontend": "npm --prefix client/dashboard run build",
     "start:backend": "npm --prefix server start",

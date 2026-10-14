@@ -1,11 +1,106 @@
 /**
  * Centralized API service layer for CausalFunnel Analytics Dashboard.
  * All API URLs derive from import.meta.env.VITE_API_URL without hardcoded origins.
+ * Includes Administrator Authentication token management and Bearer header injection.
  */
 
 const RAW_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 // Strip trailing slash if present
 export const API_BASE_URL = RAW_API_URL.replace(/\/+$/, '');
+
+const AUTH_TOKEN_KEY = 'cf_admin_token';
+
+/**
+ * Token management utilities
+ */
+export function getAuthToken() {
+  try {
+    return localStorage.getItem(AUTH_TOKEN_KEY);
+  } catch (_) {
+    return null;
+  }
+}
+
+export function setAuthToken(token) {
+  try {
+    if (token) {
+      localStorage.setItem(AUTH_TOKEN_KEY, token);
+    } else {
+      localStorage.removeItem(AUTH_TOKEN_KEY);
+    }
+  } catch (_) {}
+}
+
+export function clearAuthToken() {
+  try {
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+  } catch (_) {}
+}
+
+/**
+ * Internal helper to inject Authorization Bearer headers
+ */
+function getAuthHeaders(customHeaders = {}) {
+  const token = getAuthToken();
+  const headers = { ...customHeaders };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
+/**
+ * Administrator Login
+ * @param {string} username
+ * @param {string} password
+ * @returns {Promise<{ success: boolean, token: string, user: Object }>}
+ */
+export async function loginAdmin(username, password) {
+  const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.error || 'Authentication failed. Please check your credentials.');
+  }
+
+  if (data.token) {
+    setAuthToken(data.token);
+  }
+
+  return data;
+}
+
+/**
+ * Verify current Administrator token session
+ * @returns {Promise<{ authenticated: boolean, user?: Object }>}
+ */
+export async function verifyAdmin() {
+  const token = getAuthToken();
+  if (!token) {
+    return { authenticated: false };
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+      headers: getAuthHeaders()
+    });
+
+    if (!response.ok) {
+      clearAuthToken();
+      return { authenticated: false };
+    }
+
+    const data = await response.json();
+    return { authenticated: true, user: data.user };
+  } catch (_) {
+    return { authenticated: false };
+  }
+}
 
 /**
  * Fetch paginated list of sessions from GET /api/sessions
@@ -17,10 +112,17 @@ export const API_BASE_URL = RAW_API_URL.replace(/\/+$/, '');
  */
 export async function getSessions({ page = 1, limit = 50, signal } = {}) {
   const url = `${API_BASE_URL}/api/sessions?page=${page}&limit=${limit}`;
-  const response = await fetch(url, { signal });
+  const response = await fetch(url, {
+    headers: getAuthHeaders(),
+    signal
+  });
 
   if (!response.ok) {
     const errorBody = await response.json().catch(() => ({}));
+    if (response.status === 401) {
+      clearAuthToken();
+      window.dispatchEvent(new Event('cf_auth_unauthorized'));
+    }
     throw new Error(errorBody.error || `Failed to fetch sessions (HTTP ${response.status})`);
   }
 
@@ -46,10 +148,17 @@ export async function getSessionEvents(sessionId, { limit = 100, offset = 0, sig
   }
 
   const url = `${API_BASE_URL}/api/sessions/${encodeURIComponent(sessionId)}/events?limit=${limit}&offset=${offset}`;
-  const response = await fetch(url, { signal });
+  const response = await fetch(url, {
+    headers: getAuthHeaders(),
+    signal
+  });
 
   if (!response.ok) {
     const errorBody = await response.json().catch(() => ({}));
+    if (response.status === 401) {
+      clearAuthToken();
+      window.dispatchEvent(new Event('cf_auth_unauthorized'));
+    }
     throw new Error(errorBody.error || `Failed to fetch session events (HTTP ${response.status})`);
   }
 
@@ -76,10 +185,17 @@ export async function getHeatmap(pageUrl, { signal } = {}) {
 
   const encodedUrl = encodeURIComponent(pageUrl);
   const url = `${API_BASE_URL}/api/heatmap?page_url=${encodedUrl}`;
-  const response = await fetch(url, { signal });
+  const response = await fetch(url, {
+    headers: getAuthHeaders(),
+    signal
+  });
 
   if (!response.ok) {
     const errorBody = await response.json().catch(() => ({}));
+    if (response.status === 401) {
+      clearAuthToken();
+      window.dispatchEvent(new Event('cf_auth_unauthorized'));
+    }
     throw new Error(errorBody.error || `Failed to fetch heatmap data (HTTP ${response.status})`);
   }
 
@@ -100,10 +216,17 @@ export async function getHeatmap(pageUrl, { signal } = {}) {
  */
 export async function getPages({ page = 1, limit = 50, signal } = {}) {
   const url = `${API_BASE_URL}/api/pages?page=${page}&limit=${limit}`;
-  const response = await fetch(url, { signal });
+  const response = await fetch(url, {
+    headers: getAuthHeaders(),
+    signal
+  });
 
   if (!response.ok) {
     const errorBody = await response.json().catch(() => ({}));
+    if (response.status === 401) {
+      clearAuthToken();
+      window.dispatchEvent(new Event('cf_auth_unauthorized'));
+    }
     throw new Error(errorBody.error || `Failed to fetch tracked pages (HTTP ${response.status})`);
   }
 
@@ -113,4 +236,3 @@ export async function getPages({ page = 1, limit = 50, signal } = {}) {
     pagination: data.pagination || { page, limit, total: 0, total_pages: 1 }
   };
 }
-
