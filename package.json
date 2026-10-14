@@ -4,6 +4,9 @@
   "description": "CausalFunnel User Analytics Application - Full Stack Engineer Assignment",
   "private": true,
   "main": "server/src/server.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "build": "npm --prefix server install",
     "start": "npm --prefix server install && npm --prefix server start",

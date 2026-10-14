@@ -1,3 +1,19 @@
+// Ensure crypto and WebCrypto are globally available in all Node.js environments (Railway/container)
+const nodeCrypto = require('crypto');
+if (typeof globalThis.crypto === 'undefined') {
+  globalThis.crypto = nodeCrypto.webcrypto || nodeCrypto;
+}
+if (typeof global.crypto === 'undefined') {
+  global.crypto = globalThis.crypto;
+}
+try {
+  for (const [key, val] of Object.entries(nodeCrypto)) {
+    if (typeof globalThis.crypto[key] === 'undefined') {
+      globalThis.crypto[key] = typeof val === 'function' ? val.bind(nodeCrypto) : val;
+    }
+  }
+} catch (e) {}
+
 require('dotenv').config();
 const app = require('./app');
 const { connectDB, disconnectDB } = require('./config/database');
