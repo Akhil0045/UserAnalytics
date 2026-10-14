@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "CausalFunnel User Analytics Application - Full Stack Engineer Assignment",
   "private": true,
+  "main": "server/src/server.js",
   "scripts": {
-    "start": "npm --prefix server start",
+    "build": "npm --prefix server install",
+    "start": "npm --prefix server install && npm --prefix server start",
     "dev:frontend": "npm --prefix client/dashboard run dev",
     "build:frontend": "npm --prefix client/dashboard run build",
     "start:backend": "npm --prefix server start",
