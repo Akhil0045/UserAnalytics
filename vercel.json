@@ -1,7 +1,6 @@
 {
-  "version": 2,
-  "buildCommand": "npm --prefix client/dashboard install && npm --prefix client/dashboard run build && node -e \"const fs=require('fs'); fs.cpSync('client/dashboard/dist', 'dist', {recursive:true});\"",
-  "outputDirectory": "dist",
+  "buildCommand": "cd client/dashboard && npm install && npm run build",
+  "outputDirectory": "client/dashboard/dist",
   "rewrites": [
     {
       "source": "/(.*)",
