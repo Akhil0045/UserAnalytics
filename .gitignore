@@ -32,3 +32,11 @@ Thumbs.db
 # Test artifacts and temporary screenshots
 .playwright-mcp/
 /*.png
+
+# Local-only agent instructions and scratch documentation (excluded from GitHub)
+.agents/
+assignment.md
+implementation-status.md
+testing-checklist.md
+api-contract.md
+decisions.md
