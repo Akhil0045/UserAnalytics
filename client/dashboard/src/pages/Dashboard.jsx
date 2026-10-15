@@ -283,7 +283,7 @@ function Dashboard() {
 
   // Launch Demo Store URL
   const handleLaunchDemo = () => {
-    window.open('http://localhost:5000/demo/', '_blank');
+    window.open('/demo/index.html', '_blank');
   };
 
   // Auth checking loading state

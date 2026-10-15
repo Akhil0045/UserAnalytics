@@ -40,9 +40,13 @@ app.use(cors({
 // Request body size limit (50 KB protection against oversized payloads)
 app.use(express.json({ limit: '50kb' }));
 
-// Serve demo store and tracker statically for seamless local testing
-app.use('/demo', express.static(path.join(__dirname, '../../demo')));
-app.use('/tracker', express.static(path.join(__dirname, '../../tracker')));
+// Serve demo store and tracker statically (supports both root and subfolder Railway/container paths)
+const fs = require('fs');
+const demoDir = [path.join(__dirname, '../demo'), path.join(__dirname, '../../demo')].find(p => fs.existsSync(p));
+const trackerDir = [path.join(__dirname, '../tracker'), path.join(__dirname, '../../tracker')].find(p => fs.existsSync(p));
+
+if (demoDir) app.use('/demo', express.static(demoDir));
+if (trackerDir) app.use('/tracker', express.static(trackerDir));
 
 // Health Check Endpoint (Preserved from Phase 1 & 2)
 app.get('/api/health', (req, res) => {

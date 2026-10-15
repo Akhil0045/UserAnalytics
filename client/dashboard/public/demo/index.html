@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexusTech Store — Live Demo Tracking</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #131b2e;
+      --card-hover: #1a253f;
+      --accent-blue: #3b82f6;
+      --accent-blue-hover: #2563eb;
+      --accent-purple: #8b5cf6;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --border: #22304d;
+      --border-subtle: #1e293b;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding-bottom: 4rem;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Announcement Bar */
+    .announcement-bar {
+      background: #111827;
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.45rem 1rem;
+      text-align: center;
+      font-size: 0.8125rem;
+      color: var(--text-sub);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .announcement-bar strong {
+      color: #60a5fa;
+    }
+
+    .announcement-btn {
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #93c5fd;
+      padding: 0.15rem 0.55rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+
+    .announcement-btn:hover {
+      background: rgba(59, 130, 246, 0.3);
+      color: #fff;
+    }
+
+    /* Header Navigation */
+    header {
+      background: rgba(17, 24, 39, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0.875rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+    }
+
+    .nav-search {
+      flex: 1;
+      max-width: 440px;
+    }
+
+    .nav-search input {
+      width: 100%;
+      background: #1e293b;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .nav-search input:focus {
+      border-color: var(--accent-blue);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .action-icon-btn {
+      background: #1e293b;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 0.5rem 0.875rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+
+    .action-icon-btn:hover {
+      background: var(--card-hover);
+      border-color: var(--accent-blue);
+    }
+
+    .badge-count {
+      background: var(--accent-blue);
+      color: #fff;
+      font-size: 0.75rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 9999px;
+      font-weight: 700;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      max-width: 960px;
+      margin: 2rem auto;
+      padding: 2.75rem 2rem;
+      background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.12) 0%, rgba(19, 27, 46, 0.4) 80%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #60a5fa;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 0.2rem 0.75rem;
+      border-radius: 9999px;
+      margin-bottom: 1rem;
+    }
+
+    .hero-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.25;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #60a5fa 0%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-sub {
+      color: var(--text-sub);
+      font-size: 1rem;
+      max-width: 620px;
+      margin: 0 auto 1.5rem auto;
+    }
+
+    .hero-btns {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-main {
+      background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+      color: #fff;
+      border: none;
+      padding: 0.65rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.9375rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-main:hover {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 0.65rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.15s;
+    }
+
+    .btn-outline:hover {
+      background: #1e293b;
+      border-color: #475569;
+    }
+
+    /* Filter & Category Pills */
+    .filter-section {
+      max-width: 1200px;
+      margin: 1.5rem auto 1.25rem auto;
+      padding: 0 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .category-pills {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .cat-pill {
+      background: #131b2e;
+      border: 1px solid var(--border);
+      color: var(--text-sub);
+      padding: 0.4rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .cat-pill:hover, .cat-pill.active {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: var(--accent-blue);
+      color: #60a5fa;
+    }
+
+    /* Product Grid */
+    .catalog-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.875rem;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+
+    .card:hover {
+      border-color: #3b82f6;
+      transform: translateY(-2px);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .tag-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+    .tag-purple { background: rgba(139, 92, 246, 0.15); color: #c084fc; }
+    .tag-green { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+
+    .fav-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: transform 0.15s;
+    }
+
+    .fav-btn:hover {
+      transform: scale(1.2);
+      opacity: 1;
+    }
+
+    .product-visual {
+      height: 120px;
+      background: radial-gradient(circle at center, rgba(59, 130, 246, 0.1) 0%, rgba(19, 27, 46, 0.2) 70%);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+    }
+
+    .product-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .product-desc {
+      color: var(--text-sub);
+      font-size: 0.84rem;
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 0.875rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      gap: 0.75rem;
+    }
+
+    .price-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .price-main {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .price-orig {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      text-decoration: line-through;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 0.4rem;
+      align-items: center;
+    }
+
+    .btn-details {
+      background: #1e293b;
+      border: 1px solid var(--border);
+      color: #93c5fd;
+      padding: 0.45rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+
+    .btn-details:hover {
+      background: var(--card-hover);
+      border-color: var(--accent-blue);
+    }
+
+    .btn-add-cart {
+      background: var(--accent-blue);
+      color: #fff;
+      border: none;
+      padding: 0.45rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-add-cart:hover {
+      background: var(--accent-blue-hover);
+    }
+
+    /* FAQ Section */
+    .faq-section {
+      max-width: 800px;
+      margin: 3.5rem auto 1.5rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .faq-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .faq-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 0.65rem;
+      overflow: hidden;
+    }
+
+    .faq-question {
+      padding: 0.875rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .faq-question:hover {
+      background: var(--card-hover);
+    }
+
+    .faq-answer {
+      padding: 0 1.25rem 0.875rem 1.25rem;
+      color: var(--text-sub);
+      font-size: 0.85rem;
+      display: none;
+    }
+
+    .faq-item.open .faq-answer {
+      display: block;
+    }
+
+    /* Floating Tracker Status Badge */
+    .floating-tracker-badge {
+      position: fixed;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      background: rgba(17, 24, 39, 0.95);
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.875rem;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+      z-index: 90;
+      font-size: 0.8125rem;
+    }
+
+    .tracker-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 8px var(--accent-emerald);
+      animation: pulse-ring 2s infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% { transform: scale(0.9); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.8; }
+    }
+
+    .btn-open-dash {
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #60a5fa;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+
+    .btn-open-dash:hover {
+      background: rgba(59, 130, 246, 0.3);
+      color: #fff;
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .toast {
+      background: #1e293b;
+      border: 1px solid var(--accent-blue);
+      color: #fff;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      html, body {
+        overflow-x: hidden;
+        max-width: 100vw;
+      }
+
+      body {
+        padding-bottom: 5.5rem;
+      }
+
+      .announcement-bar {
+        font-size: 0.75rem;
+        flex-direction: column;
+        gap: 0.35rem;
+        padding: 0.45rem 0.75rem;
+      }
+
+      .nav-container {
+        flex-wrap: wrap;
+        padding: 0.75rem 1rem;
+        gap: 0.75rem;
+      }
+
+      .brand {
+        font-size: 1.15rem;
+      }
+
+      .brand-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
+      }
+
+      .nav-search {
+        order: 3;
+        flex: 1 1 100%;
+        max-width: 100%;
+        width: 100%;
+      }
+
+      .nav-actions {
+        gap: 0.5rem;
+      }
+
+      .action-icon-btn {
+        padding: 0.4rem 0.65rem;
+        font-size: 0.8rem;
+      }
+
+      .hero-section {
+        margin: 1.25rem 1rem;
+        padding: 1.75rem 1.25rem;
+        border-radius: 12px;
+      }
+
+      .hero-title {
+        font-size: 1.65rem;
+      }
+
+      .hero-sub {
+        font-size: 0.875rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .hero-btns {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.6rem;
+      }
+
+      .btn-main, .btn-outline {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .filter-section {
+        padding: 0 1rem;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+      }
+
+      .category-pills {
+        overflow-x: auto;
+        white-space: nowrap;
+        flex-wrap: nowrap;
+        padding-bottom: 0.4rem;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .catalog-container {
+        padding: 0 1rem;
+      }
+
+      .product-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+      }
+
+      .card {
+        padding: 1rem;
+        min-width: 0;
+      }
+
+      .floating-tracker-badge {
+        bottom: 0.75rem;
+        right: 0.75rem;
+        padding: 0.4rem 0.7rem;
+        font-size: 0.75rem;
+        max-width: calc(100vw - 1.5rem);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <div class="announcement-bar">
+    <span>🔥 Flash Sale: 20% OFF all hardware with promo code <strong>NEXUS20</strong></span>
+    <button class="announcement-btn" id="btn-copy-code">Copy Code</button>
+  </div>
+
+  <!-- Header Navigation -->
+  <header>
+    <div class="nav-container">
+      <a href="/demo/index.html" class="brand" id="nav-brand">
+        <div class="brand-icon">⚡</div>
+        <span>NexusTech</span>
+      </a>
+
+      <div class="nav-search">
+        <input type="text" id="input-search" placeholder="Search devices, accessories...">
+      </div>
+
+      <div class="nav-actions">
+        <button class="action-icon-btn" id="btn-wishlist">
+          ❤️ Wishlist <span class="badge-count" id="wishlist-badge">0</span>
+        </button>
+        <a href="/demo/cart.html" class="action-icon-btn" id="btn-cart">
+          🛒 Cart <span class="badge-count" id="cart-badge">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section" id="hero-banner">
+    <div class="hero-badge">✨ Next-Generation Studio Hardware</div>
+    <h1 class="hero-title">Precision Gear for <span>Makers & Players</span></h1>
+    <p class="hero-sub">Experience uncompromised engineering. Designed with acoustic fidelity, tactile perfection, and ultra-high dynamic displays.</p>
+    <div class="hero-btns">
+      <button class="btn-main" id="btn-hero-shop">Explore Catalog</button>
+      <a href="/demo/cart.html" class="btn-outline" id="btn-hero-cart">View Shopping Cart →</a>
+    </div>
+  </section>
+
+  <!-- Filter Section -->
+  <section class="filter-section">
+    <div class="category-pills">
+      <button class="cat-pill active" id="pill-all">All Gear</button>
+      <button class="cat-pill" id="pill-audio">🎧 Audio</button>
+      <button class="cat-pill" id="pill-keyboards">⌨️ Keyboards</button>
+      <button class="cat-pill" id="pill-displays">🖥️ Displays</button>
+      <button class="cat-pill" id="pill-accessories">⚡ Accessories</button>
+    </div>
+    <button class="action-icon-btn" id="btn-sort" style="font-size:0.8125rem;">Sort: Featured ▾</button>
+  </section>
+
+  <!-- Product Catalog -->
+  <main class="catalog-container">
+    <div class="product-grid" id="product-grid">
+      
+      <!-- Card 1 -->
+      <div class="card" id="card-headphones">
+        <div class="card-top">
+          <span class="card-tag tag-blue">Flagship Audio</span>
+          <button class="fav-btn" id="fav-headphones">🤍</button>
+        </div>
+        <div class="product-visual">🎧</div>
+        <h3 class="product-name">NovaPulse ANC Wireless</h3>
+        <p class="product-desc">Studio-tuned 45mm beryllium drivers with 42dB adaptive noise cancellation and 40h battery.</p>
+        <div class="card-footer">
+          <div class="price-box">
+            <span class="price-main">$299</span>
+            <span class="price-orig">$349</span>
+          </div>
+          <div class="card-actions">
+            <a href="/demo/product.html?id=headphones" class="btn-details" id="btn-view-headphones">Details →</a>
+            <button class="btn-add-cart" id="btn-cart-headphones" data-id="headphones" data-name="NovaPulse ANC Wireless" data-price="299" data-icon="🎧">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="card" id="card-keyboard">
+        <div class="card-top">
+          <span class="card-tag tag-purple">Tactile Master</span>
+          <button class="fav-btn" id="fav-keyboard">🤍</button>
+        </div>
+        <div class="product-visual">⌨️</div>
+        <h3 class="product-name">CyberKey Gasket Mechanical</h3>
+        <p class="product-desc">Hot-swappable linear switches with CNC aluminum chassis, sound dampening foam, and PBT caps.</p>
+        <div class="card-footer">
+          <div class="price-box">
+            <span class="price-main">$169</span>
+            <span class="price-orig">$199</span>
+          </div>
+          <div class="card-actions">
+            <a href="/demo/product.html?id=keyboard" class="btn-details" id="btn-view-keyboard">Details →</a>
+            <button class="btn-add-cart" id="btn-cart-keyboard" data-id="keyboard" data-name="CyberKey Gasket Mechanical" data-price="169" data-icon="⌨️">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="card" id="card-monitor">
+        <div class="card-top">
+          <span class="card-tag tag-green">4K OLED</span>
+          <button class="fav-btn" id="fav-monitor">🤍</button>
+        </div>
+        <div class="product-visual">🖥️</div>
+        <h3 class="product-name">Spectra 34" Curved Display</h3>
+        <p class="product-desc">Ultrawide QD-OLED panel with 175Hz refresh, 0.03ms response time, and 99% DCI-P3 color gamut.</p>
+        <div class="card-footer">
+          <div class="price-box">
+            <span class="price-main">$749</span>
+            <span class="price-orig">$899</span>
+          </div>
+          <div class="card-actions">
+            <a href="/demo/product.html?id=monitor" class="btn-details" id="btn-view-monitor">Details →</a>
+            <button class="btn-add-cart" id="btn-cart-monitor" data-id="monitor" data-name="Spectra 34 Curved Display" data-price="749" data-icon="🖥️">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="card" id="card-mouse">
+        <div class="card-top">
+          <span class="card-tag tag-blue">Ultralight</span>
+          <button class="fav-btn" id="fav-mouse">🤍</button>
+        </div>
+        <div class="product-visual">🖱️</div>
+        <h3 class="product-name">ViperGlide Optical Mouse</h3>
+        <p class="product-desc">49-gram magnesium skeleton with 30,000 DPI sensor and 8,000Hz hyper-polling wireless dock.</p>
+        <div class="card-footer">
+          <div class="price-box">
+            <span class="price-main">$89</span>
+            <span class="price-orig">$119</span>
+          </div>
+          <div class="card-actions">
+            <a href="/demo/product.html?id=mouse" class="btn-details" id="btn-view-mouse">Details →</a>
+            <button class="btn-add-cart" id="btn-cart-mouse" data-id="mouse" data-name="ViperGlide Optical Mouse" data-price="89" data-icon="🖱️">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="card" id="card-dock">
+        <div class="card-top">
+          <span class="card-tag tag-purple">Thunderbolt 4</span>
+          <button class="fav-btn" id="fav-dock">🤍</button>
+        </div>
+        <div class="product-visual">⚡</div>
+        <h3 class="product-name">OmniHub Pro 14-Port Dock</h3>
+        <p class="product-desc">Supports dual 8K displays, 100W PD laptop charging, 2.5Gbps Ethernet, and UHS-II card readers.</p>
+        <div class="card-footer">
+          <div class="price-box">
+            <span class="price-main">$219</span>
+            <span class="price-orig">$259</span>
+          </div>
+          <div class="card-actions">
+            <a href="/demo/product.html?id=dock" class="btn-details" id="btn-view-dock">Details →</a>
+            <button class="btn-add-cart" id="btn-cart-dock" data-id="dock" data-name="OmniHub Pro Dock" data-price="219" data-icon="⚡">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="card" id="card-earbuds">
+        <div class="card-top">
+          <span class="card-tag tag-green">Sleep & Focus</span>
+          <button class="fav-btn" id="fav-earbuds">🤍</button>
+        </div>
+        <div class="product-visual">🎵</div>
+        <h3 class="product-name">EchoBuds Spatial Audio</h3>
+        <p class="product-desc">True wireless earbuds with head-tracking spatial audio, wireless charging, and IPX7 rating.</p>
+        <div class="card-footer">
+          <div class="price-box">
+            <span class="price-main">$189</span>
+            <span class="price-orig">$229</span>
+          </div>
+          <div class="card-actions">
+            <a href="/demo/product.html?id=earbuds" class="btn-details" id="btn-view-earbuds">Details →</a>
+            <button class="btn-add-cart" id="btn-cart-earbuds" data-id="earbuds" data-name="EchoBuds Spatial Audio" data-price="189" data-icon="🎵">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Interactive FAQ Section -->
+  <section class="faq-section">
+    <h2 class="faq-title">Frequently Asked Questions</h2>
+    <div class="faq-item" id="faq-1">
+      <div class="faq-question">
+        <span>What is your international shipping policy?</span>
+        <span>▾</span>
+      </div>
+      <div class="faq-answer">
+        We offer expedited worldwide courier shipping on all orders over $99. Typical delivery takes 2 to 4 business days.
+      </div>
+    </div>
+    <div class="faq-item" id="faq-2">
+      <div class="faq-question">
+        <span>What warranty is included with NexusTech hardware?</span>
+        <span>▾</span>
+      </div>
+      <div class="faq-answer">
+        Every device includes a comprehensive 2-year manufacturer warranty with zero-cost express replacements.
+      </div>
+    </div>
+    <div class="faq-item" id="faq-3">
+      <div class="faq-question">
+        <span>How does the 30-day trial work?</span>
+        <span>▾</span>
+      </div>
+      <div class="faq-answer">
+        Test our gear for 30 days. If you're not completely satisfied, return it for a 100% full refund with prepaid shipping.
+      </div>
+    </div>
+  </section>
+
+  <!-- Floating Non-Intrusive Tracker Status Badge -->
+  <div class="floating-tracker-badge">
+    <span class="tracker-pulse"></span>
+    <span>Clicks: <strong id="click-counter" style="color:#fff;">0</strong></span>
+    <a href="http://localhost:5173" target="_blank" class="btn-open-dash">Dashboard ↗</a>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Interactive Demo Behaviors -->
+  <script>
+    let wishCount = 0;
+    let clickCount = 0;
+
+    function showToast(msg) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = msg;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 2500);
+    }
+
+    function getCart() {
+      try {
+        return JSON.parse(localStorage.getItem('cf_demo_cart')) || [];
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function updateCartBadge() {
+      const cart = getCart();
+      const count = cart.reduce((acc, c) => acc + (c.qty || 1), 0);
+      const badge = document.getElementById('cart-badge');
+      if (badge) badge.textContent = count;
+    }
+
+    // Add to cart buttons
+    document.querySelectorAll('.btn-add-cart').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        const name = btn.dataset.name;
+        const price = parseInt(btn.dataset.price, 10);
+        const icon = btn.dataset.icon;
+
+        const cart = getCart();
+        const existing = cart.find(c => c.id === id);
+        if (existing) {
+          existing.qty += 1;
+        } else {
+          cart.push({ id, name, price, icon, qty: 1 });
+        }
+        localStorage.setItem('cf_demo_cart', JSON.stringify(cart));
+        updateCartBadge();
+        showToast(`Added ${name} to cart! Total: ${cart.reduce((a, b) => a + b.qty, 0)}`);
+      });
+    });
+
+    updateCartBadge();
+
+    // Favorite heart buttons
+    document.querySelectorAll('.fav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.textContent === '🤍') {
+          btn.textContent = '❤️';
+          wishCount++;
+          showToast('Added to your wishlist!');
+        } else {
+          btn.textContent = '🤍';
+          wishCount = Math.max(0, wishCount - 1);
+        }
+        document.getElementById('wishlist-badge').textContent = wishCount;
+      });
+    });
+
+    // Copy code button
+    document.getElementById('btn-copy-code')?.addEventListener('click', () => {
+      navigator.clipboard?.writeText('NEXUS20');
+      showToast('Promo code NEXUS20 copied!');
+    });
+
+    // FAQ toggles
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.querySelector('.faq-question').addEventListener('click', () => {
+        item.classList.toggle('open');
+      });
+    });
+
+    // Category pills filter
+    document.querySelectorAll('.cat-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        showToast('Filtered: ' + pill.textContent);
+      });
+    });
+
+    // Click counter
+    document.addEventListener('click', () => {
+      clickCount++;
+      const counter = document.getElementById('click-counter');
+      if (counter) counter.textContent = clickCount;
+    });
+  </script>
+
+  <!-- Live CausalFunnel Tracker Integration -->
+  <script src="/tracker/tracker.js"></script>
+</body>
+</html>
