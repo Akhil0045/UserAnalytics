@@ -901,8 +901,21 @@
   <div class="floating-tracker-badge">
     <span class="tracker-pulse"></span>
     <span>Clicks: <strong id="click-counter" style="color:#fff;">0</strong></span>
-    <a href="http://localhost:5173" target="_blank" class="btn-open-dash">Dashboard ↗</a>
+    <a href="/" target="_blank" class="btn-open-dash" id="link-dashboard">Dashboard ↗</a>
   </div>
+
+  <script>
+    try {
+      var dLink = document.getElementById('link-dashboard');
+      if (dLink) {
+        if (window.location.hostname === 'localhost' && window.location.port === '5000') {
+          dLink.href = 'http://localhost:5173';
+        } else {
+          dLink.href = '/';
+        }
+      }
+    } catch (_) {}
+  </script>
 
   <div class="toast-container" id="toast-container"></div>
 
