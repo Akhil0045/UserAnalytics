@@ -1196,13 +1196,15 @@ body {
 /* Heatmap Grid Layout (Canvas + Sidebar) */
 .heatmap-content-grid {
   display: grid;
-  grid-template-columns: 1fr 300px;
+  grid-template-columns: minmax(0, 1fr) 300px;
   gap: 1.25rem;
+  width: 100%;
+  max-width: 100%;
 }
 
 @media (max-width: 1024px) {
   .heatmap-content-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -1210,6 +1212,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 .heatmap-canvas-container {
@@ -1218,6 +1223,8 @@ body {
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+  width: 100%;
+  max-width: 100%;
 }
 
 .viewport-mock-header {
@@ -1261,8 +1268,8 @@ body {
 .viewport-canvas {
   position: relative;
   width: 100%;
+  max-width: 100%;
   aspect-ratio: 16 / 9;
-  min-height: 480px;
   background: radial-gradient(circle, rgba(51, 65, 85, 0.4) 1px, transparent 1px);
   background-size: 20px 20px;
   overflow: hidden;
@@ -1737,46 +1744,65 @@ body {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .dashboard-header {
-    padding: 0.6rem 0.75rem;
-    gap: 0.5rem;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.65rem 0.85rem;
+    gap: 0.65rem;
+    width: 100%;
+    max-width: 100vw;
   }
 
-  .header-brand .brand-logo-icon {
-    width: 32px;
-    height: 32px;
+  .header-brand {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
   }
 
-  .header-brand .brand-logo-icon svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  .header-title {
-    font-size: 0.95rem;
-  }
-
-  .header-brand span {
-    font-size: 0.7rem;
-    max-width: 150px;
-  }
-
-  .header-actions {
-    gap: 0.3rem;
-  }
-
-
-
-  .header-actions .btn {
-    padding: 0.35rem 0.5rem;
-    font-size: 0.72rem;
+  .header-nav-tabs {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    justify-content: flex-start;
+    padding: 0.2rem;
+    gap: 0.2rem;
   }
 
   .tab-btn {
-    padding: 0.45rem 0.2rem;
+    flex: 1 0 auto;
+    padding: 0.45rem 0.65rem;
+    font-size: 0.75rem;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .header-actions .btn {
+    padding: 0.35rem 0.55rem;
     font-size: 0.72rem;
-    gap: 0.25rem;
+  }
+
+  .admin-status-pill {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  .dashboard-content {
+    padding: 0.875rem 0.6rem;
+    gap: 1rem;
+    width: 100%;
+    max-width: 100%;
   }
 
   .kpi-grid {
@@ -1789,33 +1815,83 @@ body {
     gap: 0.6rem;
   }
 
-  .kpi-icon-wrap {
-    width: 36px;
-    height: 36px;
-    font-size: 1.1rem;
-  }
-
   .kpi-value {
     font-size: 1.25rem;
   }
 
-  .kpi-label {
-    font-size: 0.68rem;
-  }
-
-  .dashboard-content {
-    padding: 0.875rem 0.6rem;
-    gap: 1rem;
-  }
-
   .panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.75rem 0.85rem;
+  }
+
+  .panel-title-group {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
+    gap: 0.4rem;
   }
 
   .panel-body {
     padding: 0.875rem 0.75rem;
+  }
+
+  .heatmap-toolbar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .viewport-mock-header {
+    padding: 0.35rem 0.55rem;
+    gap: 0.45rem;
+  }
+
+  .viewport-mock-header .badge {
+    display: none; /* Hide 170px badge on mobile */
+  }
+
+  .mock-url-bar {
+    font-size: 0.68rem;
+    padding: 0.15rem 0.4rem;
+  }
+
+  .viewport-canvas {
+    min-height: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .wireframe-mockup-layer {
+    padding: 0.4rem 0.5rem;
+    gap: 0.35rem;
+  }
+
+  .wireframe-hero {
+    height: 36px;
+    padding: 0 0.4rem;
+  }
+
+  .wireframe-pills {
+    display: none;
+  }
+
+  .wireframe-grid {
+    gap: 0.25rem;
+  }
+
+  .wireframe-card {
+    padding: 0.25rem;
+  }
+
+  .wireframe-text {
+    display: none;
   }
 
   .details-header {
@@ -1864,22 +1940,6 @@ body {
 
   .timeline-content {
     padding: 0.65rem 0.75rem;
-  }
-
-  .heatmap-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
-
-  .heatmap-controls-row {
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    width: 100%;
-  }
-
-  .viewport-canvas {
-    min-height: 240px;
   }
 
   .pages-table-wrapper {
